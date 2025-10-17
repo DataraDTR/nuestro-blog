@@ -157,6 +157,14 @@ galleries.forEach(gallery => {
         openGallery(gallery);
     });
     
+    card.addEventListener('touchstart', (e) => {
+        e.currentTarget.classList.add('active');
+    });
+    
+    card.addEventListener('touchend', (e) => {
+        e.currentTarget.classList.remove('active');
+    });
+    
     galleriesContainer.appendChild(card);
 });
 
@@ -188,6 +196,14 @@ closeModal.addEventListener('click', () => {
     document.body.style.overflow = 'auto';
 });
 
+closeModal.addEventListener('touchstart', (e) => {
+    e.currentTarget.classList.add('active');
+});
+
+closeModal.addEventListener('touchend', (e) => {
+    e.currentTarget.classList.remove('active');
+});
+
 modal.addEventListener('click', (e) => {
     if (e.target === modal) {
         modal.style.display = 'none';
@@ -198,20 +214,20 @@ modal.addEventListener('click', (e) => {
 function createConfetti() {
     const colors = ['#ff0000', '#00ff00', '#0000ff', '#ffff00', '#ff00ff', '#00ffff', '#ff8000'];
     
-    for (let i = 0; i < 50; i++) {
+    for (let i = 0; i < 30; i++) {
         const confetti = document.createElement('div');
         confetti.className = 'confetti';
         confetti.style.left = Math.random() * 100 + 'vw';
         confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
-        confetti.style.animationDuration = (Math.random() * 3 + 2) + 's';
-        confetti.style.width = (Math.random() * 15 + 5) + 'px';
-        confetti.style.height = (Math.random() * 15 + 5) + 'px';
+        confetti.style.animationDuration = (Math.random() * 2 + 2) + 's';
+        confetti.style.width = (Math.random() * 10 + 5) + 'px';
+        confetti.style.height = (Math.random() * 10 + 5) + 'px';
         
         document.body.appendChild(confetti);
         
         setTimeout(() => {
             confetti.remove();
-        }, 5000);
+        }, 4000);
     }
 }
 

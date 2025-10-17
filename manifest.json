@@ -2,20 +2,35 @@
     "name": "Nuestras Galerías de Amor",
     "short_name": "Galerías de Amor",
     "description": "Una colección de momentos especiales y recuerdos de amor en imágenes.",
-    "start_url": "index.html",
+    "start_url": "/index.html",
     "display": "standalone",
     "background_color": "#ffffff",
     "theme_color": "#d81b60",
+    "orientation": "portrait",
     "icons": [
         {
-            "src": "heart_icon.png",
+            "src": "/heart_icon.png",
             "sizes": "192x192",
-            "type": "image/png"
+            "type": "image/png",
+            "purpose": "any"
         },
         {
-            "src": "heart_icon.png",
+            "src": "/heart_icon.png",
             "sizes": "512x512",
-            "type": "image/png"
+            "type": "image/png",
+            "purpose": "any"
+        },
+        {
+            "src": "/heart_icon.png",
+            "sizes": "192x192",
+            "type": "image/png",
+            "purpose": "maskable"
+        },
+        {
+            "src": "/heart_icon.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "maskable"
         }
     ]
 }
