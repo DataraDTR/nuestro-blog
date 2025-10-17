@@ -22,7 +22,7 @@ const modalTitle = document.getElementById('modalGalleryName');
 const modalBody = document.getElementById('modalBody');
 const closeModal = document.getElementById('closeModal');
 
-// Verificar autenticación para mostrar formulario de carga
+// Verificar autenticación anónima para mostrar formulario de carga
 firebase.onAuthStateChanged(auth, (user) => {
     if (user) {
         uploadSection.style.display = 'block';

@@ -7,15 +7,15 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
     <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#d81b60">
+    <meta name="theme-color" content="#d21f60">
     <link rel="icon" type="image/png" href="heart_icon.png">
     <link rel="apple-touch-icon" href="heart_icon.png">
     <!-- Firebase SDK -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
-        import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
+        import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
         import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
-        window.firebase = { initializeApp, getAuth, signInWithEmailAndPassword, getFirestore, doc, getDoc };
+        window.firebase = { initializeApp, getAuth, signInAnonymously, getFirestore, doc, getDoc };
     </script>
     <script src="script.js" defer></script>
 </head>
