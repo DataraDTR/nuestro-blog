@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#e91e63">
+    <meta name="description" content="Una aplicación para guardar nuestros momentos de amor ♥">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>Nuestras Galerías de Amor</title>
+    <link rel="manifest" href="/manifest.json">
+    <link rel="apple-touch-icon" href="/icon-192.png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <script type="module" src="script_galeria.js" defer></script>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Nuestras Galerías de Amor <span class="heart">♥</span></h1>
+            <p class="subtitle">Cada momento contigo es una colección de recuerdos preciosos que atesoro en mi corazón</p>
+            <button id="logoutBtn" style="margin-top: 10px; padding: 8px 16px;">Cerrar Sesión</button>
+        </header>
+
+        <button id="createGalleryBtn" class="upload-form" style="margin-bottom:20px;">Crear Nueva Galería</button>
+
+        <div class="galleries-container" id="galleries"></div>
+
+        <div class="love-message">
+            "El verdadero amor no es solo estar juntos en los momentos felices, 
+            sino crear una colección de recuerdos que nos sostengan en los días difíciles."
+        </div>
+
+        <footer>
+            <p>Hecho con <span class="heart">♥</span> para ti - Nuestro amor es mi mayor tesoro</p>
+        </footer>
+    </div>
+
+    <div class="modal" id="galleryModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title" id="modalTitle"></h2>
+                <span class="close-modal" id="closeModal">&times;</span>
+            </div>
+            <div class="modal-body" id="modalBody"></div>
+        </div>
+    </div>
+
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js')
+                    .then(reg => console.log('Service Worker registrado:', reg))
+                    .catch(err => console.error('Error al registrar Service Worker:', err));
+            });
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#e91e63">
+    <meta name="description" content="Una aplicación para guardar nuestros momentos de amor ♥">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>Ingreso Seguro - Nuestras Galerías de Amor</title>
+    <link rel="manifest" href="/manifest.json">
+    <link rel="apple-touch-icon" href="/icon-192.png">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Ingreso Seguro <span class="heart">♥</span></h1>
+            <p class="subtitle">Ingresa el PIN para acceder a nuestras galerías de amor</p>
+        </header>
+
+        <form id="pinForm" class="pin-form">
+            <input type="password" id="pinInput" placeholder="Ingresa el PIN" required maxlength="6">
+            <button type="submit">Ingresar</button>
+        </form>
+
+        <div id="errorMessage" class="error-message"></div>
+    </div>
+
+    <script type="module" src="script.js"></script>
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js')
+                    .then(reg => console.log('Service Worker registrado:', reg))
+                    .catch(err => console.error('Error al registrar Service Worker:', err));
+            });
+        }
+    </script>
+</body>
+</html>

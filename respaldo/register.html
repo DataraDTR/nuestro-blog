@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Registrar Usuario y PIN</title>
+    <!-- Firebase SDK -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
+        import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
+        import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
+        window.firebase = { initializeApp, getAuth, createUserWithEmailAndPassword, getFirestore, doc, setDoc };
+    </script>
+</head>
+<body>
+    <h1>Registrar Nuevo Usuario y PIN</h1>
+    <form id="registerForm">
+        <label for="email">Email:</label>
+        <input type="email" id="email" value="blog@midatara.com" required><br><br>
+        
+        <label for="pin">PIN (Contraseña):</label>
+        <input type="password" id="pin" required><br><br>
+        
+        <button type="submit">Registrar</button>
+    </form>
+    <div id="message"></div>
+
+    <script defer>
+        document.addEventListener('DOMContentLoaded', () => {
+            const firebase = window.firebase;
+            if (!firebase || !firebase.initializeApp) {
+                document.getElementById('message').textContent = 'Error: Firebase no se cargó correctamente. Asegúrate de usar un servidor local.';
+                document.getElementById('message').style.color = 'red';
+                return;
+            }
+
+            const firebaseConfig = {
+                apiKey: "AIzaSyARJfMHe30IWXoLtRN8zsXYJZ7U-f45ZCU",
+                authDomain: "blog-44ec4.firebaseapp.com",
+                projectId: "blog-44ec4",
+                storageBucket: "blog-44ec4.firebasestorage.app",
+                messagingSenderId: "477494348087",
+                appId: "1:477494348087:web:1205d621cf3fad2c33b2b2",
+                measurementId: "G-Q236FFDCN3"
+            };
+
+            const app = firebase.initializeApp(firebaseConfig);
+            const auth = firebase.getAuth(app);
+            const db = firebase.getFirestore(app);
+
+            const registerForm = document.getElementById('registerForm');
+            const message = document.getElementById('message');
+
+            registerForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const email = document.getElementById('email').value;
+                const pin = document.getElementById('pin').value; // Corrección aquí
+
+                try {
+                    // Crear usuario en Authentication
+                    const userCredential = await firebase.createUserWithEmailAndPassword(auth, email, pin);
+                    console.log('Usuario creado:', userCredential.user);
+
+                    // Crear documento en Firestore
+                    const configRef = firebase.doc(db, 'config', 'security');
+                    await firebase.setDoc(configRef, { pin: pin });
+                    console.log('Documento en Firestore creado.');
+
+                    message.textContent = 'Usuario y PIN creados exitosamente. Ahora puedes usar el PIN para ingresar.';
+                    message.style.color = 'green';
+                } catch (error) {
+                    console.error('Error:', error);
+                    if (error.code === 'auth/email-already-in-use') {
+                        message.innerHTML = `Error: El email "${email}" ya está registrado. <a href="#" onclick="resetPassword('${email}')">¿Cambiar contraseña?</a>`;
+                        message.style.color = 'orange';
+                    } else {
+                        message.textContent = `Error: ${error.message}`;
+                        message.style.color = 'red';
+                    }
+                }
+            });
+        });
+
+        function resetPassword(email) {
+            if (confirm(`¿Quieres restablecer la contraseña para ${email}?`)) {
+                alert(`Ve a Firebase Console > Authentication > Users > Selecciona ${email} > Change password para restablecer.`);
+            }
+        }
+    </script>
+</body>
+</html>
