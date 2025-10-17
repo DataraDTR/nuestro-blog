@@ -1,5 +1,6 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
 import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
+import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
 
 // Configuración de Firebase
 const firebaseConfig = {
@@ -14,6 +15,7 @@ const firebaseConfig = {
 // Inicializar Firebase
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
+const auth = getAuth(app);
 
 const pinForm = document.getElementById("pinForm");
 const errorMessage = document.getElementById("errorMessage");
@@ -23,17 +25,28 @@ pinForm.addEventListener("submit", async (e) => {
   const pin = document.getElementById("pinInput").value.trim();
 
   try {
+    // Validar PIN en Firestore
     const configRef = doc(db, "config", "security");
     const configSnap = await getDoc(configRef);
 
     if (configSnap.exists() && configSnap.data().pin === pin) {
-      // PIN correcto → redirigir
+      console.log("PIN correcto, iniciando sesión anónima...");
+      // Iniciar sesión anónima
+      await signInAnonymously(auth);
+      console.log("Sesión anónima iniciada con éxito");
+      // Redirigir a galería
       window.location.href = "galeria.html";
     } else {
       errorMessage.textContent = "PIN incorrecto. Intenta nuevamente.";
+      errorMessage.style.color = "red";
     }
   } catch (error) {
-    console.error("Error al validar el PIN:", error);
-    errorMessage.textContent = "Error al validar el PIN. Verifica tu conexión.";
+    console.error("Error al procesar la solicitud:", error);
+    if (error.code === "auth/admin-restricted-operation") {
+      errorMessage.textContent = "Error: La autenticación anónima no está habilitada en Firebase.";
+    } else {
+      errorMessage.textContent = "Error al validar el PIN o iniciar sesión. Verifica tu conexión.";
+    }
+    errorMessage.style.color = "red";
   }
 });
