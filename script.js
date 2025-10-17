@@ -12,36 +12,40 @@ const firebaseConfig = {
   measurementId: "G-Q236FFDCN3"
 };
 
-// 🔧 Inicializar Firebase
+// Inicializar Firebase
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
-const pinForm = document.getElementById('pinForm');
-const errorMessage = document.getElementById('errorMessage');
+const pinForm = document.getElementById("pinForm");
+const errorMessage = document.getElementById("errorMessage");
 
-pinForm.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const pin = document.getElementById('pinInput').value.trim();
+pinForm.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const pin = document.getElementById("pinInput").value.trim();
 
-    try {
-        const configRef = doc(db, 'config', 'security');
-        const configSnap = await getDoc(configRef);
+  try {
+    const configRef = doc(db, "config", "security");
+    const configSnap = await getDoc(configRef);
 
-        if (configSnap.exists() && configSnap.data().pin === pin) {
-            await signInAnonymously(auth);
-            window.location.href = 'galeria.html';
-        } else {
-            errorMessage.textContent = 'PIN incorrecto. Intenta nuevamente.';
-        }
-    } catch (error) {
-        console.error('Error:', error);
-        errorMessage.textContent = 'Error al validar el PIN. Verifica tu conexión.';
+    if (configSnap.exists() && configSnap.data().pin === pin) {
+      console.log("PIN correcto, iniciando sesión anónima...");
+      await signInAnonymously(auth);
+      window.location.href = "galeria.html";
+    } else {
+      errorMessage.textContent = "PIN incorrecto. Intenta nuevamente.";
     }
+  } catch (error) {
+    console.error("Error de autenticación:", error);
+    errorMessage.textContent =
+      "Error al validar el PIN. Verifica tu conexión.";
+  }
 });
 
-if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('sw.js')
-        .then(() => console.log('Service Worker registrado'))
-        .catch(err => console.error('Error registrando SW:', err));
+// Registrar el Service Worker
+if ("serviceWorker" in navigator) {
+  navigator.serviceWorker
+    .register("sw.js")
+    .then(() => console.log("Service Worker registrado"))
+    .catch((err) => console.error("Error registrando SW:", err));
 }

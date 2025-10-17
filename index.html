@@ -4,15 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>Ingreso Seguro - Nuestras Galerías de Amor</title>
+
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#d21f60">
     <link rel="icon" type="image/png" href="heart_icon.png">
     <link rel="apple-touch-icon" href="heart_icon.png">
-    <!-- Firebase SDK -->
-    <script type="module" src="script.js"></script>
 
+    <!-- Cargar script principal como módulo -->
+    <script type="module" src="script.js"></script>
 </head>
 <body>
     <div class="container">
@@ -20,12 +21,12 @@
             <h1>Ingreso Seguro <span class="heart">♥</span></h1>
             <p class="subtitle">Ingresa el PIN para acceder a nuestras galerías de amor</p>
         </header>
-        
+
         <form id="pinForm" class="pin-form">
             <input type="password" id="pinInput" placeholder="Ingresa el PIN" required maxlength="6">
             <button type="submit">Ingresar</button>
         </form>
-        
+
         <div id="errorMessage" class="error-message"></div>
     </div>
 </body>
