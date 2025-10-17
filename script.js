@@ -1,3 +1,7 @@
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
+import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
+import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
+
 const firebaseConfig = {
   apiKey: "AIzaSyARJfMHe30IWXoLtRN8zsXYJZ7U-f45ZCU",
   authDomain: "blog-44ec4.firebaseapp.com",
@@ -8,24 +12,24 @@ const firebaseConfig = {
   measurementId: "G-Q236FFDCN3"
 };
 
-const app = firebase.initializeApp(firebaseConfig);
-const auth = firebase.getAuth(app);
-const db = firebase.getFirestore(app);
+// 🔧 Inicializar Firebase
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
 
 const pinForm = document.getElementById('pinForm');
 const errorMessage = document.getElementById('errorMessage');
 
 pinForm.addEventListener('submit', async (e) => {
     e.preventDefault();
-    const pin = document.getElementById('pinInput').value;
-    
+    const pin = document.getElementById('pinInput').value.trim();
+
     try {
-        // Verificar PIN en Firestore
-        const configRef = firebase.doc(db, 'config', 'security');
-        const configSnap = await firebase.getDoc(configRef);
+        const configRef = doc(db, 'config', 'security');
+        const configSnap = await getDoc(configRef);
+
         if (configSnap.exists() && configSnap.data().pin === pin) {
-            // Iniciar sesión anónima para permitir uploads
-            await firebase.signInAnonymously(auth);
+            await signInAnonymously(auth);
             window.location.href = 'galeria.html';
         } else {
             errorMessage.textContent = 'PIN incorrecto. Intenta nuevamente.';
