@@ -53,7 +53,7 @@
             registerForm.addEventListener('submit', async (e) => {
                 e.preventDefault();
                 const email = document.getElementById('email').value;
-                const pin = document.getElementById('pin').value;
+                const pin = document.getElementById('pin').value();
 
                 try {
                     // Crear usuario en Authentication
@@ -69,11 +69,23 @@
                     message.style.color = 'green';
                 } catch (error) {
                     console.error('Error:', error);
-                    message.textContent = `Error: ${error.message}`;
-                    message.style.color = 'red';
+                    if (error.code === 'auth/email-already-in-use') {
+                        message.innerHTML = `Error: El email "${email}" ya está registrado. <a href="#" onclick="resetPassword('${email}')">¿Cambiar contraseña?</a>`;
+                        message.style.color = 'orange';
+                    } else {
+                        message.textContent = `Error: ${error.message}`;
+                        message.style.color = 'red';
+                    }
                 }
             });
         });
+
+        function resetPassword(email) {
+            if (confirm(`¿Quieres restablecer la contraseña para ${email}?`)) {
+                // Redirigir a Firebase Console o mostrar instrucciones
+                alert(`Ve a Firebase Console > Authentication > Users > Selecciona ${email} > Change password para restablecer.`);
+            }
+        }
     </script>
 </body>
 </html>
