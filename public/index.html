@@ -9,8 +9,8 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title>Ingreso Seguro - Nuestras Galerías de Amor</title>
     <link rel="manifest" href="/manifest.json">
-    <link rel="apple-touch-icon" href="/icon-192.png">
-    <link rel="stylesheet" href="style.css">
+    <link rel="apple-touch-icon" href="/assets/icon-192.png"> <!-- Ruta actualizada -->
+    <link rel="stylesheet" href="/css/style.css"> <!-- Ruta actualizada -->
 </head>
 <body>
     <div class="container">
@@ -27,7 +27,9 @@
         <div id="errorMessage" class="error-message"></div>
     </div>
 
-    <script type="module" src="script.js"></script>
+    <!-- Script principal -->
+    <script type="module" src="/js/script.js"></script> <!-- Ruta actualizada -->
+    <!-- Registro del Service Worker -->
     <script>
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {

@@ -1,18 +1,23 @@
 const CACHE_NAME = 'galerias-de-amor-v1';
 const STATIC_ASSETS = [
-  '/',
-  '/index.html',
-  '/galeria.html',
-  '/style.css',
-  '/script.js',
-  '/script_galeria.js',
-  'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css',
-  'https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js',
-  'https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js',
-  'https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js',
-  'https://www.gstatic.com/firebasejs/10.14.1/firebase-storage.js',
-  '/icon-192.png',
-  '/icon-512.png'
+    '/',
+    '/index.html',
+    '/galeria.html',
+    '/css/style.css',
+    '/js/script.js',
+    '/js/script_galeria.js',
+    'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css',
+    'https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js',
+    'https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js',
+    'https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js',
+    'https://www.gstatic.com/firebasejs/10.14.1/firebase-storage.js',
+    '/assets/android-chrome-192x192.png',
+    '/assets/android-chrome-512x512.png',
+    '/assets/apple-touch-icon.png',
+    '/assets/favicon-16x16.png',
+    '/assets/favicon-32x32.png',
+    '/assets/favicon.ico',
+    '/manifest.json'
 ];
 
 self.addEventListener('install', event => {
