@@ -1,6 +1,6 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
-import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
-import { getFirestore, collection, getDocs, addDoc, doc, updateDoc, arrayUnion } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
+import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
+import { getFirestore, collection, getDocs, addDoc, doc, updateDoc, arrayUnion, arrayRemove, deleteDoc } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-storage.js";
 
 const firebaseConfig = {
@@ -24,6 +24,7 @@ const modalTitle = document.getElementById('modalTitle');
 const modalBody = document.getElementById('modalBody');
 const closeModal = document.getElementById('closeModal');
 const createGalleryBtn = document.getElementById('createGalleryBtn');
+const logoutBtn = document.getElementById('logoutBtn');
 
 let currentGalleryId = null;
 let currentPhotoIndex = 0;
@@ -137,10 +138,31 @@ async function loadGalleries() {
                 <div class="gallery-date">${gallery.date}</div>
                 <p class="gallery-description">${gallery.description}</p>
             </div>
+            <button class="delete-gallery-btn" data-id="${gallery.id}"><i class="fas fa-trash"></i> Eliminar</button>
         `;
         card.addEventListener('click', () => openGalleryModal(gallery));
+        const deleteBtn = card.querySelector('.delete-gallery-btn');
+        deleteBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            if (confirm('¿Seguro que quieres eliminar esta galería?')) {
+                deleteGallery(gallery.id);
+            }
+        });
         galleriesContainer.appendChild(card);
     });
+}
+
+async function deleteGallery(galleryId) {
+    try {
+        const galleryRef = doc(db, 'galerias', galleryId);
+        await deleteDoc(galleryRef);
+        loadGalleries();
+        launchConfetti();
+        alert('Galería eliminada con éxito ♥');
+    } catch (error) {
+        console.error('Error al eliminar galería:', error);
+        alert('Error al eliminar la galería.');
+    }
 }
 
 function openGalleryModal(gallery) {
@@ -165,8 +187,18 @@ function openGalleryModal(gallery) {
         const photoDiv = document.createElement('div');
         photoDiv.className = 'modal-photo';
         photoDiv.style.backgroundImage = `url('${imgObj.url}')`;
-        photoDiv.innerHTML = `<div class="photo-desc">${imgObj.desc}</div>`;
+        photoDiv.innerHTML = `
+            <div class="photo-desc">${imgObj.desc}</div>
+            <button class="delete-photo-btn" data-index="${index}"><i class="fas fa-trash"></i></button>
+        `;
         photoDiv.addEventListener('click', () => openFullScreenModal(index));
+        const deletePhotoBtn = photoDiv.querySelector('.delete-photo-btn');
+        deletePhotoBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            if (confirm('¿Seguro que quieres eliminar esta foto?')) {
+                deletePhoto(index);
+            }
+        });
         photosContainer.appendChild(photoDiv);
     });
 
@@ -190,8 +222,15 @@ function openGalleryModal(gallery) {
             const photoDiv = document.createElement('div');
             photoDiv.className = 'modal-photo';
             photoDiv.style.backgroundImage = `url('${url}')`;
-            photoDiv.innerHTML = `<div class="photo-desc">${desc}</div>`;
+            photoDiv.innerHTML = `<div class="photo-desc">${desc}</div><button class="delete-photo-btn" data-index="${images.length - 1}"><i class="fas fa-trash"></i></button>`;
             photoDiv.addEventListener('click', () => openFullScreenModal(images.length - 1));
+            const deletePhotoBtn = photoDiv.querySelector('.delete-photo-btn');
+            deletePhotoBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                if (confirm('¿Seguro que quieres eliminar esta foto?')) {
+                    deletePhoto(images.length - 1);
+                }
+            });
             photosContainer.appendChild(photoDiv);
 
             msg.textContent = '¡Foto agregada con amor! ♥';
@@ -208,6 +247,23 @@ function openGalleryModal(gallery) {
 
     modal.style.display = 'block';
     document.body.style.overflow = 'hidden';
+}
+
+async function deletePhoto(index) {
+    try {
+        const galleryRef = doc(db, 'galerias', currentGalleryId);
+        const imageToDelete = images[index];
+        await updateDoc(galleryRef, {
+            images: arrayRemove(imageToDelete)
+        });
+        images.splice(index, 1);
+        openGalleryModal({ id: currentGalleryId, images, ...normalizeImages({ images }) });
+        launchConfetti();
+        alert('Foto eliminada con éxito ♥');
+    } catch (error) {
+        console.error('Error al eliminar foto:', error);
+        alert('Error al eliminar la foto.');
+    }
 }
 
 function openFullScreenModal(index) {
@@ -263,6 +319,19 @@ function openFullScreenModal(index) {
         modalFull.querySelector('.fullscreen-desc').textContent = images[currentPhotoIndex].desc;
     }
 }
+
+logoutBtn.addEventListener('click', () => {
+    if (confirm('¿Seguro que quieres cerrar sesión?')) {
+        signOut(auth).then(() => {
+            window.location.href = '/index.html'; // Redirige a la pantalla de ingreso
+            launchConfetti();
+            alert('Sesión cerrada con éxito ♥');
+        }).catch((error) => {
+            console.error('Error al cerrar sesión:', error);
+            alert('Error al cerrar sesión.');
+        });
+    }
+});
 
 document.addEventListener('DOMContentLoaded', () => {
     loadGalleries();

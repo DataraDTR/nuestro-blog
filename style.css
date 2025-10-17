@@ -484,3 +484,49 @@ button[type="submit"]:hover {
     #pinInput { font-size: 1rem; }
     button[type="submit"] { font-size: 1rem; padding: 10px 20px; }
 }
+
+.delete-gallery-btn, .delete-photo-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: rgba(211, 47, 47, 0.9); /* Rojo suave */
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: transform 0.3s, background 0.3s;
+}
+
+.delete-gallery-btn:hover, .delete-photo-btn:hover {
+    transform: scale(1.1);
+    background: #d32f2f; /* Rojo más intenso al hover */
+}
+
+.delete-photo-btn {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    z-index: 1;
+}
+
+/* Ajuste para el botón de cerrar sesión */
+#logoutBtn {
+    padding: 10px 20px;
+    background: linear-gradient(135deg, #e91e63, #7e57c2);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+#logoutBtn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(233, 30, 99, 0.3);
+}
