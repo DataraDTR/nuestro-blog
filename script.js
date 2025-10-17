@@ -23,7 +23,7 @@ pinForm.addEventListener('submit', async (e) => {
         const configRef = firebase.doc(db, 'config', 'security');
         const configSnap = await firebase.getDoc(configRef);
         if (configSnap.exists() && configSnap.data().pin === pin) {
-            await firebase.signInWithEmailAndPassword(auth, 'acceso@amorgaleria.com', pin);
+            await firebase.signInWithEmailAndPassword(auth, 'blog@midatara.com', pin);
             window.location.href = 'galeria.html';
         } else {
             errorMessage.textContent = 'PIN incorrecto. Intenta nuevamente.';
