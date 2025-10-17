@@ -18,16 +18,19 @@ const errorMessage = document.getElementById('errorMessage');
 pinForm.addEventListener('submit', async (e) => {
     e.preventDefault();
     const pin = document.getElementById('pinInput').value;
+    console.log('PIN ingresado:', pin);
     
     try {
         const configRef = firebase.doc(db, 'config', 'security');
         const configSnap = await firebase.getDoc(configRef);
+        console.log('Datos de Firestore:', configSnap.data());
         if (configSnap.exists() && configSnap.data().pin === pin) {
-            console.log('PIN válido en Firestore, intentando autenticación...');
-            await firebase.signInWithEmailAndPassword(auth, 'blog@midatara.com', pin);
+            console.log('PIN válido en Firestore, intentando autenticación con:', 'blog@midatara.com', pin);
+            const result = await firebase.signInWithEmailAndPassword(auth, 'blog@midatara.com', pin);
+            console.log('Autenticación exitosa:', result.user);
             window.location.href = 'galeria.html';
         } else {
-            errorMessage.textContent = 'PIN incorrecto. Intenta nuevamente.';
+            errorMessage.textContent = 'PIN incorrecto. Intenta nuevamente. Verifica que coincida con Firestore.';
         }
     } catch (error) {
         console.error('Error de autenticación:', error);
