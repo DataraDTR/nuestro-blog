@@ -41,11 +41,3 @@ pinForm.addEventListener("submit", async (e) => {
       "Error al validar el PIN. Verifica tu conexión.";
   }
 });
-
-// Registrar el Service Worker
-if ("serviceWorker" in navigator) {
-  navigator.serviceWorker
-    .register("sw.js")
-    .then(() => console.log("Service Worker registrado"))
-    .catch((err) => console.error("Error registrando SW:", err));
-}
