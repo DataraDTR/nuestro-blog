@@ -39,6 +39,19 @@ function launchConfetti() {
     }
 }
 
+// Normalizar datos de imágenes (compatibilidad con esquema antiguo)
+function normalizeImages(gallery) {
+    let images = [];
+    if (gallery.images && Array.isArray(gallery.images)) {
+        // Nuevo esquema: images ya es [{url, desc}]
+        images = gallery.images;
+    } else if (gallery.allImages && Array.isArray(gallery.allImages)) {
+        // Esquema antiguo: allImages es array de URLs
+        images = gallery.allImages.map(url => ({ url, desc: 'Un momento especial ♥' }));
+    }
+    return images;
+}
+
 // Mostrar modal para crear nueva galería
 createGalleryBtn.addEventListener('click', openCreateGalleryModal);
 
@@ -69,7 +82,7 @@ function openCreateGalleryModal() {
 
             const galleryData = {
                 title, icon, date, description,
-                images: []  // Cambiado a 'images' para simplicidad
+                images: [] // Usamos solo 'images' para el nuevo esquema
             };
 
             await addDoc(collection(db, 'galerias'), galleryData);
@@ -102,17 +115,19 @@ modal.addEventListener('click', e => {
     }
 });
 
-// Cargar galerías (MEJORADO: Previews + Contador)
+// Cargar galerías (MEJORADO: Soporta ambos esquemas)
 async function loadGalleries() {
     galleriesContainer.innerHTML = '';
     const querySnapshot = await getDocs(collection(db, 'galerias'));
     querySnapshot.forEach(docSnap => {
         const gallery = { id: docSnap.id, ...docSnap.data() };
+        const images = normalizeImages(gallery); // Normalizar imágenes
+
         const card = document.createElement('div');
         card.className = 'gallery-card';
 
         // Generar previews (hasta 4, con placeholders)
-        const previews = gallery.images ? gallery.images.slice(0, 4) : [];
+        const previews = images.slice(0, 4);
         while (previews.length < 4) previews.push(null);
 
         const previewHTML = previews.map(img => 
@@ -122,7 +137,7 @@ async function loadGalleries() {
 
         card.innerHTML = `
             <div class="gallery-preview">${previewHTML}</div>
-            <div class="photo-count">${gallery.images ? gallery.images.length : 0}</div>
+            <div class="photo-count">${images.length}</div>
             <div class="gallery-info">
                 <h3 class="gallery-title"><i class="${gallery.icon} gallery-icon"></i> ${gallery.title}</h3>
                 <div class="gallery-date">${gallery.date}</div>
@@ -134,7 +149,7 @@ async function loadGalleries() {
     });
 }
 
-// Modal de galería (MEJORADO: Muestra descripciones + Zoom)
+// Modal de galería (MEJORADO: Muestra fotos de ambos esquemas)
 function openGalleryModal(gallery) {
     currentGalleryId = gallery.id;
     modalTitle.innerHTML = `<i class="${gallery.icon}"></i> ${gallery.title}`;
@@ -152,8 +167,9 @@ function openGalleryModal(gallery) {
     const photosContainer = document.getElementById('photosContainer');
     const msg = document.getElementById('modalMessage');
 
-    // Renderizar fotos con descripciones
-    (gallery.images || []).forEach(imgObj => {
+    // Renderizar fotos normalizadas
+    const images = normalizeImages(gallery);
+    images.forEach(imgObj => {
         const photoDiv = document.createElement('div');
         photoDiv.className = 'modal-photo';
         photoDiv.style.backgroundImage = `url('${imgObj.url}')`;
@@ -175,7 +191,7 @@ function openGalleryModal(gallery) {
 
             const galleryRef = doc(db, 'galerias', currentGalleryId);
             await updateDoc(galleryRef, {
-                images: arrayUnion({ url, desc })
+                images: arrayUnion({ url, desc }) // Guardar en 'images'
             });
 
             // Agregar a UI
@@ -190,7 +206,7 @@ function openGalleryModal(gallery) {
             msg.style.color = 'green';
             launchConfetti();
             form.reset();
-            loadGalleries();  // Recarga previews
+            loadGalleries(); // Recarga previews
         } catch (err) {
             console.error(err);
             msg.textContent = 'Error al subir la foto.';
