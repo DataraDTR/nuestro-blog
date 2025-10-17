@@ -15,7 +15,6 @@ const STATIC_ASSETS = [
   '/icon-512.png'
 ];
 
-// Instalación: Cachear archivos estáticos
 self.addEventListener('install', event => {
   event.waitUntil(
     caches.open(CACHE_NAME).then(cache => {
@@ -25,7 +24,6 @@ self.addEventListener('install', event => {
   self.skipWaiting();
 });
 
-// Activación: Limpiar cachés antiguos
 self.addEventListener('activate', event => {
   event.waitUntil(
     caches.keys().then(cacheNames => {
@@ -39,11 +37,9 @@ self.addEventListener('activate', event => {
   self.clients.claim();
 });
 
-// Fetch: Estrategia cache-first para estáticos, network-first para dinámicos
 self.addEventListener('fetch', event => {
   const url = new URL(event.request.url);
 
-  // Recursos dinámicos (imágenes de Firebase Storage)
   if (url.pathname.startsWith('/galerias/') || url.hostname.includes('firebasestorage.googleapis.com')) {
     event.respondWith(networkFirst(event.request));
   } else {
@@ -51,7 +47,6 @@ self.addEventListener('fetch', event => {
   }
 });
 
-// Cache-first: Intenta servir desde caché, fallback a red
 async function cacheFirst(request) {
   const cachedResponse = await caches.match(request);
   return cachedResponse || fetch(request).then(response => {
@@ -64,7 +59,6 @@ async function cacheFirst(request) {
   });
 }
 
-// Network-first: Intenta red primero, fallback a caché
 async function networkFirst(request) {
   try {
     const networkResponse = await fetch(request);

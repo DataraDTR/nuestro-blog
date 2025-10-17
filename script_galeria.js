@@ -29,7 +29,6 @@ let currentGalleryId = null;
 let currentPhotoIndex = 0;
 let images = [];
 
-// Función para lanzar confeti
 function launchConfetti() {
     for (let i = 0; i < 50; i++) {
         const confetti = document.createElement('div');
@@ -41,7 +40,6 @@ function launchConfetti() {
     }
 }
 
-// Normalizar datos de imágenes
 function normalizeImages(gallery) {
     let images = [];
     if (gallery.images && Array.isArray(gallery.images)) {
@@ -52,7 +50,6 @@ function normalizeImages(gallery) {
     return images;
 }
 
-// Mostrar modal para crear nueva galería
 createGalleryBtn.addEventListener('click', openCreateGalleryModal);
 
 function openCreateGalleryModal() {
@@ -103,7 +100,6 @@ function openCreateGalleryModal() {
     document.body.style.overflow = 'hidden';
 }
 
-// Cerrar modal
 closeModal.addEventListener('click', () => {
     modal.style.display = 'none';
     document.body.style.overflow = 'auto';
@@ -115,7 +111,6 @@ modal.addEventListener('click', e => {
     }
 });
 
-// Cargar galerías
 async function loadGalleries() {
     galleriesContainer.innerHTML = '';
     const querySnapshot = await getDocs(collection(db, 'galerias'));
@@ -148,7 +143,6 @@ async function loadGalleries() {
     });
 }
 
-// Modal de galería
 function openGalleryModal(gallery) {
     currentGalleryId = gallery.id;
     images = normalizeImages(gallery);
@@ -216,7 +210,6 @@ function openGalleryModal(gallery) {
     document.body.style.overflow = 'hidden';
 }
 
-// Modal de pantalla completa
 function openFullScreenModal(index) {
     currentPhotoIndex = index;
     const modalFull = document.createElement('div');
@@ -232,20 +225,17 @@ function openFullScreenModal(index) {
     `;
     document.body.appendChild(modalFull);
 
-    // Cerrar modal
     const closeFull = modalFull.querySelector('.close-fullscreen');
     closeFull.addEventListener('click', () => {
         modalFull.remove();
-        document.body.style.overflow = 'hidden'; // Mantener modal de galería
+        document.body.style.overflow = 'hidden'; 
     });
 
-    // Navegación
     const prevBtn = modalFull.querySelector('.prev-btn');
     const nextBtn = modalFull.querySelector('.next-btn');
     prevBtn.addEventListener('click', () => updateFullScreenModal((currentPhotoIndex - 1 + images.length) % images.length));
     nextBtn.addEventListener('click', () => updateFullScreenModal((currentPhotoIndex + 1) % images.length));
 
-    // Teclado
     document.addEventListener('keydown', handleKeyNav);
     function handleKeyNav(e) {
         if (e.key === 'ArrowLeft') updateFullScreenModal((currentPhotoIndex - 1 + images.length) % images.length);
@@ -253,7 +243,6 @@ function openFullScreenModal(index) {
         if (e.key === 'Escape') modalFull.remove();
     }
 
-    // Swipe
     let touchStartX = 0;
     modalFull.addEventListener('touchstart', e => {
         touchStartX = e.touches[0].clientX;
@@ -275,9 +264,7 @@ function openFullScreenModal(index) {
     }
 }
 
-// Inicializar
 document.addEventListener('DOMContentLoaded', () => {
     loadGalleries();
-    // Limpiar eventos de teclado al cerrar página
     window.addEventListener('unload', () => document.removeEventListener('keydown', handleKeyNav));
 });

@@ -412,20 +412,58 @@ footer {
     outline: none;
 }
 
-button {
+/* Estilos para el formulario del PIN */
+.pin-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    max-width: 300px;
+    margin: 20px auto;
+    padding: 20px;
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 15px;
+    box-shadow: 0 8px 20px rgba(233, 30, 99, 0.2);
+}
+
+#pinInput {
+    padding: 12px;
+    font-size: 1.1rem;
+    border: 2px solid #e91e63;
+    border-radius: 10px;
+    outline: none;
+    transition: border-color 0.3s, box-shadow 0.3s;
+    background: rgba(255, 255, 255, 0.95);
+    color: #5d4037;
+}
+
+#pinInput:focus {
+    border-color: #7e57c2;
+    box-shadow: 0 0 10px rgba(126, 87, 194, 0.3);
+}
+
+button[type="submit"] {
     padding: 12px 24px;
     background: linear-gradient(135deg, #e91e63, #7e57c2);
     color: white;
     border: none;
     border-radius: 10px;
     cursor: pointer;
-    transition: all 0.3s;
     font-weight: bold;
+    font-size: 1.1rem;
+    transition: transform 0.3s, box-shadow 0.3s;
 }
 
-button:hover {
+button[type="submit"]:hover {
     transform: translateY(-2px);
     box-shadow: 0 5px 15px rgba(233, 30, 99, 0.3);
+}
+
+.error-message {
+    text-align: center;
+    margin-top: 10px;
+    color: #d32f2f;
+    font-size: 1rem;
+    font-weight: bold;
 }
 
 /* Media Queries */
@@ -442,4 +480,7 @@ button:hover {
     .modal-photo { height: 120px; }
     h1 { font-size: 2rem; }
     .nav-btn { padding: 10px; font-size: 1.2rem; }
+    .pin-form { max-width: 250px; padding: 15px; }
+    #pinInput { font-size: 1rem; }
+    button[type="submit"] { font-size: 1rem; padding: 10px 20px; }
 }
