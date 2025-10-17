@@ -6,19 +6,35 @@
     <title>Nuestras Galerías de Amor</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
-    <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#d81b60">
     <link rel="icon" type="image/png" href="heart_icon.png">
     <link rel="apple-touch-icon" href="heart_icon.png">
+
     <!-- Firebase SDK -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
         import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
-        import { getFirestore, collection, getDocs, addDoc } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
+        import { getFirestore, collection, getDocs, doc, getDoc, addDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
         import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-storage.js";
-        window.firebase = { initializeApp, getAuth, onAuthStateChanged, getFirestore, collection, getDocs, addDoc, getStorage, ref, uploadBytes, getDownloadURL };
+
+        window.firebase = {
+            initializeApp,
+            getAuth,
+            onAuthStateChanged,
+            getFirestore,
+            collection,
+            getDocs,
+            doc,
+            getDoc,
+            addDoc,
+            updateDoc,
+            getStorage,
+            ref,
+            uploadBytes,
+            getDownloadURL
+        };
     </script>
-    <script src="script_galeria.js" defer></script>
+    <script src="script_galeria.js" type="module" defer></script>
 </head>
 <body>
     <div class="container">
@@ -26,53 +42,60 @@
             <h1>Nuestras Galerías de Amor <span class="heart">♥</span></h1>
             <p class="subtitle">Cada momento contigo es una colección de recuerdos preciosos que atesoro en mi corazón</p>
         </header>
-        
-        <div class="memory-section">
-            <h2 class="memory-title">Nuestra Historia en Imágenes</h2>
-            <p class="memory-text">
-                Este espacio está dedicado a todos los momentos especiales que hemos vivido juntos. 
-                Cada galería es un capítulo de nuestra historia, lleno de risas, aventuras y amor. 
-                Haz clic en cualquier galería para revivir esos recuerdos.
-            </p>
+
+        <!-- Botón crear nueva galería -->
+        <div style="text-align:center; margin: 20px;">
+            <button id="btnNewGallery">+ Nueva Galería</button>
         </div>
-        
-        <!-- Formulario para subir imágenes (visible solo para usuarios autenticados) -->
-        <div id="uploadSection" class="upload-section" style="display: none;">
-            <h3>Agregar Nueva Galería</h3>
-            <form id="uploadForm" class="upload-form">
-                <input type="text" id="galleryTitle" placeholder="Título de la galería">
-                <input type="text" id="galleryIcon" placeholder="Clase de ícono FontAwesome (e.g., fas fa-heart)">
-                <input type="text" id="galleryDate" placeholder="Fecha (e.g., 2023-2024)">
-                <textarea id="galleryDescription" placeholder="Descripción de la galería"></textarea>
-                <input type="file" id="galleryImages" multiple accept="image/*">
-                <button type="submit">Subir Galería</button>
-            </form>
-            <div id="uploadMessage" class="upload-message"></div>
-        </div>
-        
+
         <div class="galleries-container" id="galleries">
             <!-- Las galerías se generarán con JavaScript -->
         </div>
-        
+
         <div class="love-message">
             "El verdadero amor no es solo estar juntos en los momentos felices, 
             sino crear una colección de recuerdos que nos sostengan en los días difíciles."
         </div>
-        
+
         <footer>
             <p>Hecho con <span class="heart">♥</span> para ti - Nuestro amor es mi mayor tesoro</p>
         </footer>
     </div>
-    
-    <!-- Modal para galería completa -->
-    <div class="modal" id="galleryModal">
+
+    <!-- Modal para crear nueva galería -->
+    <div class="modal" id="newGalleryModal">
         <div class="modal-content">
             <div class="modal-header">
-                <h2 class="modal-title" id="modalTitle"><i class="fas fa-heart gallery-icon"></i> <span id="modalGalleryName"></span></h2>
-                <span class="close-modal" id="closeModal">&times;</span>
+                <h2>Crear Nueva Galería</h2>
+                <span class="close-modal" id="closeNewGallery">&times;</span>
             </div>
-            <div class="modal-body" id="modalBody">
-                <!-- Las fotos de la galería se cargarán aquí -->
+            <div class="modal-body">
+                <form id="newGalleryForm">
+                    <input type="text" id="newGalleryTitle" placeholder="Título">
+                    <input type="text" id="newGalleryIcon" placeholder="Clase de ícono FontAwesome (ej. fas fa-heart)">
+                    <input type="text" id="newGalleryDate" placeholder="Fecha">
+                    <textarea id="newGalleryDescription" placeholder="Descripción"></textarea>
+                    <button type="submit">Crear Galería</button>
+                </form>
+                <div id="newGalleryMessage"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para agregar fotos a galería existente -->
+    <div class="modal" id="addPhotosModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="addPhotosTitle"></h2>
+                <span class="close-modal" id="closeAddPhotos">&times;</span>
+            </div>
+            <div class="modal-body">
+                <form id="addPhotosForm">
+                    <input type="file" id="galleryNewImages" multiple accept="image/*">
+                    <textarea id="galleryNewDescription" placeholder="Descripción de las fotos"></textarea>
+                    <button type="submit">Agregar Fotos</button>
+                </form>
+                <div id="addPhotosMessage"></div>
             </div>
         </div>
     </div>
