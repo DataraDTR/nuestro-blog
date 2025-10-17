@@ -23,18 +23,19 @@ pinForm.addEventListener('submit', async (e) => {
     try {
         const configRef = firebase.doc(db, 'config', 'security');
         const configSnap = await firebase.getDoc(configRef);
-        console.log('Datos de Firestore:', configSnap.data());
-        if (configSnap.exists() && configSnap.data().pin === pin) {
-            console.log('PIN válido en Firestore, intentando autenticación con email: blog@midatara.com y PIN:', pin);
+        const firestoreData = configSnap.data();
+        console.log('Datos de Firestore:', firestoreData);
+        if (configSnap.exists() && firestoreData.pin === pin) {
+            console.log('PIN válido en Firestore, intentando autenticación con email:', 'blog@midatara.com', 'y PIN:', pin);
             const result = await firebase.signInWithEmailAndPassword(auth, 'blog@midatara.com', pin);
-            console.log('Autenticación exitosa:', result.user.uid);
+            console.log('Autenticación exitosa, UID:', result.user.uid);
             window.location.href = 'galeria.html';
         } else {
-            errorMessage.textContent = 'PIN incorrecto o documento en Firestore no existe.';
+            errorMessage.textContent = 'PIN incorrecto o documento en Firestore no existe. Firestore pin:', firestoreData ? firestoreData.pin : 'no encontrado';
         }
     } catch (error) {
         console.error('Error completo:', error.code, error.message);
-        errorMessage.textContent = `Error: ${error.code} - ${error.message}. Revisa si el usuario está creado.`;
+        errorMessage.textContent = `Error: ${error.code} - ${error.message}. Revisa si el usuario está creado y el PIN coincide.`;
     }
 });
 
