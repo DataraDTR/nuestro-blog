@@ -23,6 +23,7 @@ pinForm.addEventListener('submit', async (e) => {
         const configRef = firebase.doc(db, 'config', 'security');
         const configSnap = await firebase.getDoc(configRef);
         if (configSnap.exists() && configSnap.data().pin === pin) {
+            console.log('PIN válido en Firestore, intentando autenticación...');
             await firebase.signInWithEmailAndPassword(auth, 'blog@midatara.com', pin);
             window.location.href = 'galeria.html';
         } else {
@@ -30,7 +31,7 @@ pinForm.addEventListener('submit', async (e) => {
         }
     } catch (error) {
         console.error('Error de autenticación:', error);
-        errorMessage.textContent = 'Error al validar el PIN. Verifica tu conexión.';
+        errorMessage.textContent = `Error al validar el PIN: ${error.message}. Verifica tu conexión o datos.`;
     }
 });
 
