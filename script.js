@@ -1,20 +1,18 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
-import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
 import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
 
+// Configuración de Firebase
 const firebaseConfig = {
   apiKey: "AIzaSyARJfMHe30IWXoLtRN8zsXYJZ7U-f45ZCU",
   authDomain: "blog-44ec4.firebaseapp.com",
   projectId: "blog-44ec4",
   storageBucket: "blog-44ec4.firebasestorage.app",
   messagingSenderId: "477494348087",
-  appId: "1:477494348087:web:1205d621cf3fad2c33b2b2",
-  measurementId: "G-Q236FFDCN3"
+  appId: "1:477494348087:web:1205d621cf3fad2c33b2b2"
 };
 
 // Inicializar Firebase
 const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
 const db = getFirestore(app);
 
 const pinForm = document.getElementById("pinForm");
@@ -29,15 +27,13 @@ pinForm.addEventListener("submit", async (e) => {
     const configSnap = await getDoc(configRef);
 
     if (configSnap.exists() && configSnap.data().pin === pin) {
-      console.log("PIN correcto, iniciando sesión anónima...");
-      await signInAnonymously(auth);
+      // PIN correcto → redirigir
       window.location.href = "galeria.html";
     } else {
       errorMessage.textContent = "PIN incorrecto. Intenta nuevamente.";
     }
   } catch (error) {
-    console.error("Error de autenticación:", error);
-    errorMessage.textContent =
-      "Error al validar el PIN. Verifica tu conexión.";
+    console.error("Error al validar el PIN:", error);
+    errorMessage.textContent = "Error al validar el PIN. Verifica tu conexión.";
   }
 });
