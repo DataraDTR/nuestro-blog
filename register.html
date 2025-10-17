@@ -25,46 +25,54 @@
     <div id="message"></div>
 
     <script defer>
-        const firebase = window.firebase;
-        const firebaseConfig = {
-            apiKey: "AIzaSyARJfMHe30IWXoLtRN8zsXYJZ7U-f45ZCU",
-            authDomain: "blog-44ec4.firebaseapp.com",
-            projectId: "blog-44ec4",
-            storageBucket: "blog-44ec4.firebasestorage.app",
-            messagingSenderId: "477494348087",
-            appId: "1:477494348087:web:1205d621cf3fad2c33b2b2",
-            measurementId: "G-Q236FFDCN3"
-        };
-
-        const app = firebase.initializeApp(firebaseConfig);
-        const auth = firebase.getAuth(app);
-        const db = firebase.getFirestore(app);
-
-        const registerForm = document.getElementById('registerForm');
-        const message = document.getElementById('message');
-
-        registerForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const email = document.getElementById('email').value;
-            const pin = document.getElementById('pin').value;
-
-            try {
-                // Crear usuario en Authentication
-                const userCredential = await firebase.createUserWithEmailAndPassword(auth, email, pin);
-                console.log('Usuario creado:', userCredential.user);
-
-                // Crear documento en Firestore
-                const configRef = firebase.doc(db, 'config', 'security');
-                await firebase.setDoc(configRef, { pin: pin });
-                console.log('Documento en Firestore creado.');
-
-                message.textContent = 'Usuario y PIN creados exitosamente. Ahora puedes usar el PIN para ingresar.';
-                message.style.color = 'green';
-            } catch (error) {
-                console.error('Error:', error);
-                message.textContent = `Error: ${error.message}`;
-                message.style.color = 'red';
+        document.addEventListener('DOMContentLoaded', () => {
+            const firebase = window.firebase;
+            if (!firebase || !firebase.initializeApp) {
+                document.getElementById('message').textContent = 'Error: Firebase no se cargó correctamente. Asegúrate de usar un servidor local.';
+                document.getElementById('message').style.color = 'red';
+                return;
             }
+
+            const firebaseConfig = {
+                apiKey: "AIzaSyARJfMHe30IWXoLtRN8zsXYJZ7U-f45ZCU",
+                authDomain: "blog-44ec4.firebaseapp.com",
+                projectId: "blog-44ec4",
+                storageBucket: "blog-44ec4.firebasestorage.app",
+                messagingSenderId: "477494348087",
+                appId: "1:477494348087:web:1205d621cf3fad2c33b2b2",
+                measurementId: "G-Q236FFDCN3"
+            };
+
+            const app = firebase.initializeApp(firebaseConfig);
+            const auth = firebase.getAuth(app);
+            const db = firebase.getFirestore(app);
+
+            const registerForm = document.getElementById('registerForm');
+            const message = document.getElementById('message');
+
+            registerForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const email = document.getElementById('email').value;
+                const pin = document.getElementById('pin').value;
+
+                try {
+                    // Crear usuario en Authentication
+                    const userCredential = await firebase.createUserWithEmailAndPassword(auth, email, pin);
+                    console.log('Usuario creado:', userCredential.user);
+
+                    // Crear documento en Firestore
+                    const configRef = firebase.doc(db, 'config', 'security');
+                    await firebase.setDoc(configRef, { pin: pin });
+                    console.log('Documento en Firestore creado.');
+
+                    message.textContent = 'Usuario y PIN creados exitosamente. Ahora puedes usar el PIN para ingresar.';
+                    message.style.color = 'green';
+                } catch (error) {
+                    console.error('Error:', error);
+                    message.textContent = `Error: ${error.message}`;
+                    message.style.color = 'red';
+                }
+            });
         });
     </script>
 </body>
