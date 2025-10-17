@@ -204,6 +204,17 @@ h1 {
     align-items: center;
 }
 
+.close-modal {
+    font-size: 24px;
+    cursor: pointer;
+    transition: transform 0.3s;
+    padding: 10px;
+}
+
+.close-modal:hover {
+    transform: scale(1.2);
+}
+
 .modal-body {
     padding: 20px;
     display: grid;
@@ -226,10 +237,9 @@ h1 {
     position: relative;
 }
 
-.modal-photo.zoomed {
-    transform: scale(1.1);
-    z-index: 1001;
-    box-shadow: 0 10px 30px rgba(233, 30, 99, 0.4);
+.modal-photo:hover {
+    transform: scale(1.05);
+    box-shadow: 0 10px 25px rgba(233, 30, 99, 0.3);
 }
 
 .photo-desc {
@@ -246,10 +256,88 @@ h1 {
     transition: transform 0.3s ease;
 }
 
-.modal-photo:hover .photo-desc,
-.modal-photo.zoomed .photo-desc {
+.modal-photo:hover .photo-desc {
     transform: translateY(0);
 }
+
+.modal-fullscreen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.9);
+    z-index: 2000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    touch-action: none;
+}
+
+.modal-fullscreen-content {
+    position: relative;
+    max-width: 90%;
+    max-height: 90vh;
+    text-align: center;
+}
+
+.fullscreen-img {
+    max-width: 100%;
+    max-height: 80vh;
+    border-radius: 15px;
+    box-shadow: 0 10px 30px rgba(233, 30, 99, 0.3);
+    object-fit: contain;
+    transition: transform 0.3s ease;
+}
+
+.fullscreen-desc {
+    margin-top: 10px;
+    color: white;
+    font-size: 1rem;
+    background: rgba(233, 30, 99, 0.9);
+    padding: 10px;
+    border-radius: 8px;
+    max-width: 80%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.close-fullscreen {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    color: white;
+    font-size: 30px;
+    cursor: pointer;
+    transition: transform 0.3s;
+}
+
+.close-fullscreen:hover {
+    transform: scale(1.2);
+}
+
+.nav-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(233, 30, 99, 0.8);
+    color: white;
+    border: none;
+    padding: 15px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 1.5rem;
+    transition: all 0.3s;
+}
+
+.nav-btn:hover {
+    background: #7e57c2;
+    transform: translateY(-50%) scale(1.1);
+}
+
+.prev-btn { left: 20px; }
+.next-btn { right: 20px; }
 
 .love-message {
     text-align: center;
@@ -346,10 +434,12 @@ button:hover {
     .gallery-preview { height: 180px; }
     .modal-body { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); }
     .modal-photo { height: 140px; }
+    .fullscreen-img { max-height: 70vh; }
 }
 
 @media (max-width: 480px) {
     .gallery-preview { height: 160px; gap: 2px; padding: 2px; }
     .modal-photo { height: 120px; }
     h1 { font-size: 2rem; }
+    .nav-btn { padding: 10px; font-size: 1.2rem; }
 }

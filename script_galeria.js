@@ -26,8 +26,10 @@ const closeModal = document.getElementById('closeModal');
 const createGalleryBtn = document.getElementById('createGalleryBtn');
 
 let currentGalleryId = null;
+let currentPhotoIndex = 0;
+let images = [];
 
-// Función para lanzar confeti (opcional, romántico)
+// Función para lanzar confeti
 function launchConfetti() {
     for (let i = 0; i < 50; i++) {
         const confetti = document.createElement('div');
@@ -39,14 +41,12 @@ function launchConfetti() {
     }
 }
 
-// Normalizar datos de imágenes (compatibilidad con esquema antiguo)
+// Normalizar datos de imágenes
 function normalizeImages(gallery) {
     let images = [];
     if (gallery.images && Array.isArray(gallery.images)) {
-        // Nuevo esquema: images ya es [{url, desc}]
         images = gallery.images;
     } else if (gallery.allImages && Array.isArray(gallery.allImages)) {
-        // Esquema antiguo: allImages es array de URLs
         images = gallery.allImages.map(url => ({ url, desc: 'Un momento especial ♥' }));
     }
     return images;
@@ -82,7 +82,7 @@ function openCreateGalleryModal() {
 
             const galleryData = {
                 title, icon, date, description,
-                images: [] // Usamos solo 'images' para el nuevo esquema
+                images: []
             };
 
             await addDoc(collection(db, 'galerias'), galleryData);
@@ -115,18 +115,17 @@ modal.addEventListener('click', e => {
     }
 });
 
-// Cargar galerías (MEJORADO: Soporta ambos esquemas)
+// Cargar galerías
 async function loadGalleries() {
     galleriesContainer.innerHTML = '';
     const querySnapshot = await getDocs(collection(db, 'galerias'));
     querySnapshot.forEach(docSnap => {
         const gallery = { id: docSnap.id, ...docSnap.data() };
-        const images = normalizeImages(gallery); // Normalizar imágenes
+        const images = normalizeImages(gallery);
 
         const card = document.createElement('div');
         card.className = 'gallery-card';
 
-        // Generar previews (hasta 4, con placeholders)
         const previews = images.slice(0, 4);
         while (previews.length < 4) previews.push(null);
 
@@ -149,9 +148,10 @@ async function loadGalleries() {
     });
 }
 
-// Modal de galería (MEJORADO: Muestra fotos de ambos esquemas)
+// Modal de galería
 function openGalleryModal(gallery) {
     currentGalleryId = gallery.id;
+    images = normalizeImages(gallery);
     modalTitle.innerHTML = `<i class="${gallery.icon}"></i> ${gallery.title}`;
     modalBody.innerHTML = `
         <form id="addPhotosForm" class="upload-form">
@@ -167,14 +167,12 @@ function openGalleryModal(gallery) {
     const photosContainer = document.getElementById('photosContainer');
     const msg = document.getElementById('modalMessage');
 
-    // Renderizar fotos normalizadas
-    const images = normalizeImages(gallery);
-    images.forEach(imgObj => {
+    images.forEach((imgObj, index) => {
         const photoDiv = document.createElement('div');
         photoDiv.className = 'modal-photo';
         photoDiv.style.backgroundImage = `url('${imgObj.url}')`;
         photoDiv.innerHTML = `<div class="photo-desc">${imgObj.desc}</div>`;
-        photoDiv.addEventListener('click', () => photoDiv.classList.toggle('zoomed'));
+        photoDiv.addEventListener('click', () => openFullScreenModal(index));
         photosContainer.appendChild(photoDiv);
     });
 
@@ -191,22 +189,22 @@ function openGalleryModal(gallery) {
 
             const galleryRef = doc(db, 'galerias', currentGalleryId);
             await updateDoc(galleryRef, {
-                images: arrayUnion({ url, desc }) // Guardar en 'images'
+                images: arrayUnion({ url, desc })
             });
 
-            // Agregar a UI
+            images.push({ url, desc });
             const photoDiv = document.createElement('div');
             photoDiv.className = 'modal-photo';
             photoDiv.style.backgroundImage = `url('${url}')`;
             photoDiv.innerHTML = `<div class="photo-desc">${desc}</div>`;
-            photoDiv.addEventListener('click', () => photoDiv.classList.toggle('zoomed'));
+            photoDiv.addEventListener('click', () => openFullScreenModal(images.length - 1));
             photosContainer.appendChild(photoDiv);
 
             msg.textContent = '¡Foto agregada con amor! ♥';
             msg.style.color = 'green';
             launchConfetti();
             form.reset();
-            loadGalleries(); // Recarga previews
+            loadGalleries();
         } catch (err) {
             console.error(err);
             msg.textContent = 'Error al subir la foto.';
@@ -218,5 +216,68 @@ function openGalleryModal(gallery) {
     document.body.style.overflow = 'hidden';
 }
 
+// Modal de pantalla completa
+function openFullScreenModal(index) {
+    currentPhotoIndex = index;
+    const modalFull = document.createElement('div');
+    modalFull.className = 'modal-fullscreen';
+    modalFull.innerHTML = `
+        <div class="modal-fullscreen-content">
+            <span class="close-fullscreen">&times;</span>
+            <button class="nav-btn prev-btn"><i class="fas fa-chevron-left"></i></button>
+            <img src="${images[index].url}" alt="Foto" class="fullscreen-img">
+            <div class="fullscreen-desc">${images[index].desc}</div>
+            <button class="nav-btn next-btn"><i class="fas fa-chevron-right"></i></button>
+        </div>
+    `;
+    document.body.appendChild(modalFull);
+
+    // Cerrar modal
+    const closeFull = modalFull.querySelector('.close-fullscreen');
+    closeFull.addEventListener('click', () => {
+        modalFull.remove();
+        document.body.style.overflow = 'hidden'; // Mantener modal de galería
+    });
+
+    // Navegación
+    const prevBtn = modalFull.querySelector('.prev-btn');
+    const nextBtn = modalFull.querySelector('.next-btn');
+    prevBtn.addEventListener('click', () => updateFullScreenModal((currentPhotoIndex - 1 + images.length) % images.length));
+    nextBtn.addEventListener('click', () => updateFullScreenModal((currentPhotoIndex + 1) % images.length));
+
+    // Teclado
+    document.addEventListener('keydown', handleKeyNav);
+    function handleKeyNav(e) {
+        if (e.key === 'ArrowLeft') updateFullScreenModal((currentPhotoIndex - 1 + images.length) % images.length);
+        if (e.key === 'ArrowRight') updateFullScreenModal((currentPhotoIndex + 1) % images.length);
+        if (e.key === 'Escape') modalFull.remove();
+    }
+
+    // Swipe
+    let touchStartX = 0;
+    modalFull.addEventListener('touchstart', e => {
+        touchStartX = e.touches[0].clientX;
+    });
+    modalFull.addEventListener('touchmove', e => {
+        const touchEndX = e.touches[0].clientX;
+        const diffX = touchStartX - touchEndX;
+        if (Math.abs(diffX) > 50) {
+            if (diffX > 0) updateFullScreenModal((currentPhotoIndex + 1) % images.length);
+            else updateFullScreenModal((currentPhotoIndex - 1 + images.length) % images.length);
+            touchStartX = touchEndX;
+        }
+    });
+
+    function updateFullScreenModal(newIndex) {
+        currentPhotoIndex = newIndex;
+        modalFull.querySelector('.fullscreen-img').src = images[currentPhotoIndex].url;
+        modalFull.querySelector('.fullscreen-desc').textContent = images[currentPhotoIndex].desc;
+    }
+}
+
 // Inicializar
-document.addEventListener('DOMContentLoaded', () => loadGalleries());
+document.addEventListener('DOMContentLoaded', () => {
+    loadGalleries();
+    // Limpiar eventos de teclado al cerrar página
+    window.addEventListener('unload', () => document.removeEventListener('keydown', handleKeyNav));
+});
