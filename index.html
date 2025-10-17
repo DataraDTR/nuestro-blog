@@ -3,56 +3,35 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Nuestras Galerías de Amor</title>
+    <title>Ingreso Seguro - Nuestras Galerías de Amor</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#d81b60">
     <link rel="icon" type="image/png" href="heart_icon.png">
     <link rel="apple-touch-icon" href="heart_icon.png">
+    <!-- Firebase SDK -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
+        import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
+        import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
+        window.firebase = { initializeApp, getAuth, signInWithEmailAndPassword, getFirestore, doc, getDoc };
+    </script>
     <script src="script.js" defer></script>
 </head>
 <body>
     <div class="container">
         <header>
-            <h1>Nuestras Galerías de Amor <span class="heart">♥</span></h1>
-            <p class="subtitle">Cada momento contigo es una colección de recuerdos preciosos que atesoro en mi corazón</p>
+            <h1>Ingreso Seguro <span class="heart">♥</span></h1>
+            <p class="subtitle">Ingresa el PIN para acceder a nuestras galerías de amor</p>
         </header>
         
-        <div class="memory-section">
-            <h2 class="memory-title">Nuestra Historia en Imágenes</h2>
-            <p class="memory-text">
-                Este espacio está dedicado a todos los momentos especiales que hemos vivido juntos. 
-                Cada galería es un capítulo de nuestra historia, lleno de risas, aventuras y amor. 
-                Haz clic en cualquier galería para revivir esos recuerdos.
-            </p>
-        </div>
+        <form id="pinForm" class="pin-form">
+            <input type="password" id="pinInput" placeholder="Ingresa el PIN" required maxlength="6">
+            <button type="submit">Ingresar</button>
+        </form>
         
-        <div class="galleries-container" id="galleries">
-            <!-- Las galerías se generarán con JavaScript -->
-        </div>
-        
-        <div class="love-message">
-            "El verdadero amor no es solo estar juntos en los momentos felices, 
-            sino crear una colección de recuerdos que nos sostengan en los días difíciles."
-        </div>
-        
-        <footer>
-            <p>Hecho con <span class="heart">♥</span> para ti - Nuestro amor es mi mayor tesoro</p>
-        </footer>
-    </div>
-    
-    <!-- Modal para galería completa -->
-    <div class="modal" id="galleryModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2 class="modal-title" id="modalTitle"><i class="fas fa-heart gallery-icon"></i> <span id="modalGalleryName"></span></h2>
-                <span class="close-modal" id="closeModal">&times;</span>
-            </div>
-            <div class="modal-body" id="modalBody">
-                <!-- Las fotos de la galería se cargarán aquí -->
-            </div>
-        </div>
+        <div id="errorMessage" class="error-message"></div>
     </div>
 </body>
 </html>

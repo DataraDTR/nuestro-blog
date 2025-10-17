@@ -4,6 +4,8 @@ const urlsToCache = [
     "/index.html",
     "/style.css",
     "/script.js",
+    "/galeria.html",
+    "/script_galeria.js",
     "/manifest.json",
     "/heart_icon.png",
     "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
